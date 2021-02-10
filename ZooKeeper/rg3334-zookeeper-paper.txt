@@ -1,0 +1,32 @@
+Rishabh Gupta
+rg3334
+
+1. How does ZooKeeper achieves lock-free co-ordination? 
+
+Ans: 
+ZooKeeper moved away from locks while designing its API and implemented wait-free data objects organized hierarchically 
+as in file systems. But it achieved co-ordination by providing order guarantees for operations. In particular, by 
+guaranteeing both FIFO client ordering of all operations and linearizable writes, Zookerper provides an efficient 
+implementation of the service and it is sufficient to implement coordination primitives of interest to various 
+distributed applications.
+
+
+2. Describe the guarantees provided by ZooKeeper.
+
+Ans: ZooKeeper offers two basic ordering guarantees:
+a) FIFO Client Order: All requests coming from a client are executed in the same order as they were sent by the client.
+b) Linearizable Writes: All requests that update the state of ZooKeeper are serializable and respect precedence. Here,
+the linearizability offered is asynchronous, while basically allows the client to have multiple outstanding operations,
+and these operations occur in FIFO order.
+
+3. Explain briefly how ZooKeeper is used for dynamic configuration management (see Sec 2.4).
+
+Ans:
+ZooKeeper can be used for dynamic configuration management in the following way:
+a) The configuration is stored in a znode, Zc and the processes start up with the full pathname of this znode.
+b) Processes obtain the configuration stored in znode Zc while starting up and set the watch flag to true. If the 
+configuration is updated in Zc, the processes are notified and the updated configuration is read, and the watch 
+flag is set to true again.
+c) If an update is notified to the process and by the time the process reads the znode, if more changes have been made to 
+Zc, the process doesn't receive notifications for these subsequent changes, since the process would already know that the 
+information in Zc is stale.

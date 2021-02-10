@@ -1,0 +1,38 @@
+Rishabh Gupta
+rg3334
+
+Q1. Why GFS was created when there were so many other file systems already? What is the rationale behind creating such a file system.
+
+Ans. Even though there were already many file systems present that addresssed the basic requirements of large distributed data intensive applications
+such as performance, scalability, reliability, and availability, those systems were created with certain file system design assumptions which did 
+not hold true for more recent technological environments and application workloads. GFS was designed with a focus on these changing application 
+requirements and environments, both current and anticipated.
+The rationale behind creating such a file system was to examine the traditional choices and explore new points in the design space. Component failures 
+are the norm rather than the exception, so, constant monitoring, error detection, fault tolerance, and automatic recovery must be integral to the
+system. Additionally, size of files have become huge by traditional standards and having file sizes in GBs is quite common. On top of that, most files 
+are modified by appending new data rather than overwriting existing data. In certain use-cases, large amounts of data is just accessed for analysis and no 
+modification is done to it. Such changes in the amount and handling of data called for revisiting the design principles assumptions that were being followed
+till now.
+
+Q2. Why GFS is extremely scalable?
+
+Ans. : Modularity allows GFS to easily expand to account for increasing amounts of data and users. The system is designed such that adding more 
+chunkservers can be accomplished without significantly modifying the master server. Further, the decentralized method of data access that primarily involves
+chunkserver-application interaction alleviates significant bottlenecks at the master. The combination of extensibility as well as performance across increasing
+amounts of users and data means that the system is entirely scalable, especially within the Google context. 
+
+Q3. Explain the key components for GFS architecture.
+
+Ans. The key components of the GFS architecture are the master, chunkservers, clients and chunks.
+Files are divided into fixed size chunks which are identified by globally unique chunk handles that is assigned by the master at the time of 
+chunk creation. Chunkservers are the machines that store these chunks on local disks as Linux files and read or write chunk data specificed
+by a chunk handle and byte range. The master maintains all file system metadata which includes the namespace, access control information, the 
+mapping from files to chunks, and the current locations of chunks. The master provides the chunk handle and byte range to the clients which then 
+provides this information to the chunkservers and obtain/modify the chunk data. Thus, clients interact with the master for metadata operations, but 
+all data-bearing communication goes directly to the chunkservers.
+
+Q4. How GFS handles a chunk server failure??
+
+Ans. GFS handles chunk server failures via re-replication. In GFS, each chunk is replicated on multiple chunkservers on different racks. The 
+default replication level is three, although the user can specify a different level for different parts of the file namespace. When a chunk server 
+fails, some chunks become under replicated. The master clones these chunks using their existing replicas to restore their replication levels. 

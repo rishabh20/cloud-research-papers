@@ -1,0 +1,22 @@
+Rishabh Gupta
+rg3334
+
+Q1. Explain Figure 1 in your own language with an example of your own.
+
+Ans. Figure 1 represents a slice of a Bigtable table and displays the three indexes, row key, column key, and timestamp elaborating on how Bigtable is a multi-dimensional map. For example, if we use a Bigtable to store details of a social media network, each row in the table would correspond to a user with a unique user id. Different kinds of user information would be stored in the table as separate column families. For example, there can be a column family to store all the posts the user publishes on its timeline that will be timestamped with the timestamp index indicating the time when the post was published. Similarly, there can be one column family for the users' personal info, one for its list of friends, and so on. The timestamp index would keep a track of how these details keep changing with time. We can set the per-column-family setting to ensure that only the last n relevant versions are kept in the table. Like, for the friends column family, only the last 1 version is needed to be kept.
+
+Q2. Explain Fig 4 in Section 5.1.
+
+Ans. The figure represents the three-level hierarchy that is used to locate tablets. The first level is a file stored in Chubby that contains the location of the root tablet which contains the location of all tablets in a special metadata table. Each tablet in the metadata table contains the location of a set of user tablets. The last level is this mapping between the metadata tablets and the user tablets. 
+
+Q3. What are the key building blocks in a big table data structure?
+
+Ans. The key building blocks of a big table data structure are as follows:
+
+a) Google File System for storing log and data files.
+b) The Google SSTable file format is used to store Bigtable data. An SSTable provides a persistent, ordered immutable map from keys to values, and each SSTable is stored as a sequence of blocks. A block index is used to locate blocks, and the index is loaded into memory whenever an SSTable is opened.
+c) A highly available and persistent distributed lock service called Chubby which is used to discover tablet servers, store the bootstrap location of Bigtable data and ensure that there is at most one active master at any time. It also stores Bigtable schema information, access control lists, and finalizes tablet server deaths.
+
+Q4. What is the role of bloom filter?
+
+Ans. The role of the bloom filter is to reduce the number of disk accesses made to do a read operation. A read operation has to read from all SSTables that make up the state of the tablet and if the SSTables are not present in memory, we may end up doing many disk accesses. A bloom filter saves the information on whether an SSTable might contain any data for a specified row/column pair and the disk is accessed only if it indicates that the SSTable has that data.
